@@ -1,0 +1,118 @@
+# require 'github/markup'
+require 'rdiscount'
+task :default => ["md:merge"]
+
+
+title = ENV["MP_TITLE"] || "Keras - AI"
+css_url = ENV["MP_CSS_URL"] || "https://gist.githubusercontent.com/murayama333/e65e8867d684648577ba/raw/c2c9ebc77fe403f100894d644838211fb3ef6153/gist.css"
+
+mds = Dir.glob("*.md").sort
+dir = File.dirname(__FILE__)
+namespace :md do
+
+  desc "コンパイル対象のMarkdown一覧を表示します。"
+  task "list" do
+    mds.each {|md_file| puts md_file}
+  end
+
+  desc "tmp、destフォルダを初期化します。"
+  task :init do
+    sh "rm -rf #{dir}/dest" if Dir.exist?("#{dir}/dest")
+    sh "rm -rf #{dir}/tmp" if Dir.exist?("#{dir}/tmp")
+  end
+
+  desc "MarkdownをHTMLに変換します。"
+  task :compile => :init do
+    mkdir "#{dir}/tmp" unless Dir.exist? "#{dir}/tmp"
+    mds.each do |md_file|
+      html_file = "tmp/" + File.basename(md_file, ".md") + ".html"
+      page_div_file = "tmp/" + File.basename(md_file, ".md") + "_page_div.html"
+
+      content = File.read(md_file)
+      File.write html_file, RDiscount.new(content).to_html
+#      File.write html_file, GitHub::Markup.render(md_file)
+      File.write page_div_file, '<div style="page-break-before: always;"></div>'
+    end
+    File.write("tmp/000_header.html", header)
+    File.write("tmp/ZZZ_footer.html", footer)
+  end
+
+  desc "コンパイルしたHTMLをマージします。"
+  task "merge" => "compile" do
+  # task "merge" do
+    mkdir "#{dir}/dest" unless Dir.exist? "#{dir}/dest"
+    sh "cat tmp/*.html > dest/index.html"
+  end
+
+  desc "HTMLをPDFに変換します。"
+  task "pdf" do
+    sh <<-EOS
+wkhtmltopdf \
+ --margin-top 2.8cm \
+ --header-spacing 5 \
+ --header-center "[title]" \
+ --margin-bottom 2.0cm \
+ --footer-spacing 5 \
+ --footer-center "[page]" \
+ #{dir}/dest/index.html #{dir}/dest/index.pdf
+EOS
+  end
+
+  desc "目次を生成します。ページ番号は自分で振ってください"
+  task "toc" do
+    mkdir "#{dir}/toc" unless Dir.exist? "#{dir}/toc"
+    toc_md_file = "#{dir}/toc/toc.md"
+    cmd =%(cat *.md | grep '^##\\? ' | grep -v rb)
+    toc = `#{cmd}`.gsub("##", "\t+").gsub("#", "+")
+    header = <<-EOS
+# #{title}
+
+## 目次
+
+EOS
+    toc = header + toc
+    File.write(toc_md_file, toc)
+  end
+
+end
+
+
+define_method :header do
+  style = ENV['MP_USE_BOOTSTRAP'] || "false"
+
+  if style == "true"
+  puts "use Bootstrap!"
+<<-EOS
+<html>
+<head>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
+  <title>#{title}</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="#{css_url}" type="text/css">
+</head>
+<body>
+
+EOS
+  else
+<<-EOS
+<html>
+<head>
+  <title>#{title}</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="#{css_url}" type="text/css">
+</head>
+<body>
+
+EOS
+  end
+end
+
+
+def footer
+  <<-EOS
+
+</body>
+</html>
+EOS
+end
