@@ -53,14 +53,14 @@ train_datagen = ImageDataGenerator(rescale=1.0/255,
                                    horizontal_flip=True,
                                    vertical_flip=True)
 
-train_generator = train_datagen.flow_from_directory('data240x360/data/train',
+train_generator = train_datagen.flow_from_directory('data240x360/train',
                                                     target_size=(240, 360),
                                                     batch_size=32,
                                                     class_mode='binary')
 
 test_datagen = ImageDataGenerator(rescale=1.0/255)
 
-test_generator = test_datagen.flow_from_directory('data240x360/data/test',
+test_generator = test_datagen.flow_from_directory('data240x360/test',
                                                         target_size=(240, 360),
                                                         batch_size=32,
                                                         class_mode='binary')

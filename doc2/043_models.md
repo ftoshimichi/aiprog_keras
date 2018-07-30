@@ -70,8 +70,8 @@ VGG16を特徴抽出器として利用すると、入力データは(224, 224, 3
 
 + 対象画像はA or Bの2種類（2値分類）とする
 + 画像サイズは縦：240px 横：360pxとする
-+ data240x360/data/trainフォルダには864件の訓練データ
-+ data240x360/data/testフォルダには700件のテストデータ
++ data240x360/trainフォルダには864件の訓練データ
++ data240x360/testフォルダには700件のテストデータ
 
 まずはVGG16を使って入力データの特徴を抽出します。
 
@@ -83,7 +83,7 @@ from keras.applications.vgg16 import VGG16
 model = VGG16(include_top=False, weights='imagenet')
 
 train_datagen = ImageDataGenerator(rescale=1.0 / 255)
-train_generator = train_datagen.flow_from_directory('data240x360/data/train',
+train_generator = train_datagen.flow_from_directory('data240x360/train',
                                                       target_size=(240, 360),
                                                       batch_size=32,
                                                       class_mode=None,
@@ -94,7 +94,7 @@ print(bottleneck_features_train.shape)
 np.save(open('bottleneck_features_train.npy', 'wb'), bottleneck_features_train)
 
 test_datagen = ImageDataGenerator(rescale=1. / 255)
-test_generator = test_datagen.flow_from_directory('data240x360/data/test',
+test_generator = test_datagen.flow_from_directory('data240x360/test',
                                                     target_size=(240, 360),
                                                     batch_size=32,
                                                     class_mode=None,
@@ -145,7 +145,7 @@ model = VGG16(include_top=False, weights='imagenet')
 
 ```python
 train_datagen = ImageDataGenerator(rescale=1. / 255)
-train_generator = train_datagen.flow_from_directory('data240x360/data/train',
+train_generator = train_datagen.flow_from_directory('data240x360/train',
                                                       target_size=(240, 360),
                                                       batch_size=32,
                                                       class_mode=None,

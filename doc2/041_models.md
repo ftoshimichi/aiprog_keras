@@ -24,8 +24,6 @@ CNNが注目されるきっかけになったのが2012年に登場したAlexNet
 
 AlexNetでは畳み込みレイヤー、プーリングレイヤー、全結合レイヤーで構成されています。LeNetと比較すると活性化関数にReLU関数に使用したり、Dropoutレイヤーを導入したりといった改善が提案されています。
 
-<div style="page-break-before:always"></div>
-
 AlexNet以降も様々な画像認識モデルが提案されています。
 
 + VGG16
