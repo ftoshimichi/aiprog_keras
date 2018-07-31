@@ -1,5 +1,10 @@
 doc/tmp
 doc/toc
 doc/test
+append/dest
+append/img
+append/toc
+doc/dest
 .DS_Store
 tmp
+Rakefile
