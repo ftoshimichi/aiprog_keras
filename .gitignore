@@ -1,10 +1,13 @@
 doc/tmp
 doc/toc
 doc/test
+doc/dest
 append/dest
 append/img
 append/toc
-doc/dest
+work/dest
+work/img
+work/toc
 .DS_Store
 tmp
 Rakefile
