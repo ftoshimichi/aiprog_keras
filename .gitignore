@@ -3,10 +3,8 @@ doc/toc
 doc/test
 doc/dest
 append/dest
-append/img
 append/toc
 work/dest
-work/img
 work/toc
 .DS_Store
 tmp
